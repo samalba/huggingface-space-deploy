@@ -72,7 +72,6 @@ def parse_args() -> argparse.Namespace:
 
 if __name__ == "__main__":
     args = parse_args()
-    print(args)
     folder_url = hf_upload_to_space(args.repo_id,
                                     args.access_token,
                                     args.source_path,
