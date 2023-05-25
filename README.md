@@ -9,7 +9,7 @@ This command deploys the current directory to a Huggingface Space:
 ```sh
 HF_SPACE_ID="username/myspace"
 HF_TOKEN="hf_xxx"
-docker run -it --rm -v .:/src samalba/hugginface-space-deploy \
+docker run -it --rm -v .:/src ghcr.io/samalba/hugginface-space-deploy \
     --repo-id $HF_SPACE_ID \
     --access-token $HF_TOKEN \
     /src \
