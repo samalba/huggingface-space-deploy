@@ -1,5 +1,6 @@
 #!/usr/bin/env python
 
+import os
 import argparse
 import time
 
@@ -63,7 +64,7 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("source_path", help="local path of the source to upload")
     parser.add_argument("target_path", default="", nargs="?", help="target path of the destination")
     parser.add_argument("--repo-id", required=True, help="Ignore patterns")
-    parser.add_argument("--access-token", required=True)
+    parser.add_argument("--access-token", default=os.environ.get("ACCESS_TOKEN"), required=True)
     parser.add_argument("--ignore-patterns", nargs="*")
     parser.add_argument("--timeout", type=int, default=300, help="Set timeout to wait for the deploy to complete (default: 5 min)")
     args = parser.parse_args()
