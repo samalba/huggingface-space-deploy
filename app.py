@@ -1,6 +1,7 @@
 #!/usr/bin/env python
 
 import os
+import sys
 import argparse
 import time
 
@@ -64,15 +65,22 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("source_path", help="local path of the source to upload")
     parser.add_argument("target_path", default="", nargs="?", help="target path of the destination")
     parser.add_argument("--repo-id", required=True, help="Ignore patterns")
-    parser.add_argument("--access-token", default=os.environ.get("ACCESS_TOKEN"), required=True)
+    parser.add_argument("--access-token", default=os.environ.get("ACCESS_TOKEN"))
     parser.add_argument("--ignore-patterns", nargs="*")
     parser.add_argument("--timeout", type=int, default=300, help="Set timeout to wait for the deploy to complete (default: 5 min)")
     args = parser.parse_args()
     return args
 
 
+def check_token(args: argparse.Namespace) -> str:
+    if args.access_token is None or args.access_token == "":
+        print("Access token cannot be empty: set the env var ACCESS_TOKEN or the --access-token arg")
+        sys.exit(1)
+
+
 if __name__ == "__main__":
     args = parse_args()
+    check_token(args)
     folder_url = hf_upload_to_space(args.repo_id,
                                     args.access_token,
                                     args.source_path,
