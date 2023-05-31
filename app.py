@@ -5,6 +5,7 @@ import sys
 import argparse
 import time
 
+import urllib3
 import requests
 from huggingface_hub import HfApi, SpaceStage
 
@@ -16,8 +17,12 @@ def fetch_build_logs(repo_id: str, access_token: str):
         "Cache-Control": "no-cache",
         "Authorization": f"Bearer {access_token}",
     }
-    r = requests.get(f"https://huggingface.co/api/spaces/{repo_id}/logs/build?isHtml=true", headers=headers)
-    return r.text
+    try:
+        r = requests.get(f"https://huggingface.co/api/spaces/{repo_id}/logs/build?isHtml=true", headers=headers)
+        return r.text
+    except (requests.RequestException, urllib3.exceptions.RequestError):
+        pass
+    return None
 
 
 def hf_upload_to_space(repo_id: str, access_token: str, source_path: str, target_path: str, ignore_patterns: list[str] or None, timeout: int) -> str:
@@ -34,7 +39,8 @@ def hf_upload_to_space(repo_id: str, access_token: str, source_path: str, target
     # timeout is 3 min
     for i in range(0, timeout):
         build_logs = fetch_build_logs(repo_id, access_token)
-        if len(build_logs) > last_printed_logs:
+
+        if (build_logs is not None) and (len(build_logs) > last_printed_logs):
             print(build_logs[last_printed_logs:], flush=True)
             last_printed_logs = len(build_logs)
 
